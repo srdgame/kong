@@ -23,13 +23,15 @@ addons:
 
 env:
   global:
-    - LUAROCKS=2.4.3
+    - LUAROCKS=3.0.4
     - OPENSSL=1.1.1a
     - OPENRESTY_BASE=1.13.6.2
     - OPENRESTY_LATEST=1.13.6.2
     - OPENRESTY=$OPENRESTY_BASE
     - DOWNLOAD_CACHE=$HOME/download-cache
     - INSTALL_CACHE=$HOME/install-cache
+    - KONG_TEST_PG_DATABASE=travis
+    - KONG_TEST_PG_USER=postgres
     - JOBS=2
   matrix:
     - KONG_TEST_DATABASE=postgres TEST_SUITE=integration
@@ -38,8 +40,6 @@ env:
     - KONG_TEST_DATABASE=postgres TEST_SUITE=plugins
     - KONG_TEST_DATABASE=cassandra CASSANDRA=2.2 TEST_SUITE=plugins
     - KONG_TEST_DATABASE=cassandra CASSANDRA=3.9 TEST_SUITE=plugins
-    - KONG_TEST_DATABASE=postgres TEST_SUITE=old-integration
-    - KONG_TEST_DATABASE=postgres TEST_SUITE=old-plugins
     - TEST_SUITE=pdk
 
 before_install:
@@ -69,7 +69,6 @@ jobs:
       script:
       - luacheck -q .
       - bin/busted -v -o gtest spec/01-unit
-      - bin/busted -v -o gtest spec-old-api/01-unit
       env:
         - KONG_DATABASE=none
     - stage: deploy
